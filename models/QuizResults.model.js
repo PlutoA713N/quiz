@@ -3,7 +3,7 @@ module.exports = mongoose => {
   
     const quizResultSchema = new Schema(
       {
-         name: { type: String, required: true },
+        userName: { type: String, required: true },
          score: { type: Number }
       },
       { timestamps: true }
