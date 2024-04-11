@@ -41,7 +41,7 @@ const calculatePartialScores = (correctAnswers, userAnswers) => {
     console.log( partialScore, incorrectCount )
 
     if (incorrectCount > 0) {
-        partialScore -= ( (incorrectCount/2) / correctCount);
+        partialScore -= incorrectCount /  userAnswers.length
     }
 
     return partialScore;
