@@ -1,20 +1,50 @@
 function calculateScore(quizDocument, userSolution) {
     let score = 0;
 
-    quizDocument.questions.forEach((quizQuestion, index) => {
-        const correctAnswers = quizQuestion.answers.filter(answer => answer.isChecked);
+    quizDocument.questions.forEach((question, index) => {
+        const eachQuestionAnswers = question.answers;
         const userAnswers = userSolution.questions[index].answers;
 
-        const isCorrect = correctAnswers.every(correctAnswer =>
-            userAnswers.some(userAnswer => userAnswer.optionName === correctAnswer.optionName && userAnswer.isChecked)
-        );
+        const questionsAnswer = eachQuestionAnswers.every((answer, index2) => {
+            const optionName = answer.optionName;
+            const isOptionSelected = answer.isChecked;
+            const userOptionName = userAnswers[index2].optionName;
+            const userSelectedOption = userAnswers[index2].isChecked;            
 
-        if (isCorrect) {
-            score++;
-        }
+            return optionName === userOptionName && isOptionSelected === userSelectedOption;
+        });
+       
+        if (questionsAnswer) {
+            score += 1;
+        } else {
+            score += calculatePartialScores(eachQuestionAnswers, userAnswers);
+        }      
     });
 
     return score;
 }
+
+const calculatePartialScores = (correctAnswers, userAnswers) => {
+    const correctCount = correctAnswers.filter(answer => answer.isChecked).length;
+    const userCorrectCount = userAnswers.filter(answer => {
+        const correctAnswer = correctAnswers.find(a => a.optionName === answer.optionName);
+        return correctAnswer && correctAnswer.isChecked && answer.isChecked;
+    }).length;
+
+    const incorrectCount = userAnswers.filter(answer => {
+        const correctAnswer = correctAnswers.find(a => a.optionName === answer.optionName);
+        return !correctAnswer || !correctAnswer.isChecked && answer.isChecked;
+    }).length;
+
+    let partialScore =   userCorrectCount/correctCount
+
+    console.log( partialScore, incorrectCount )
+
+    if (incorrectCount > 0) {
+        partialScore -= ( (incorrectCount/2) / correctCount);
+    }
+
+    return partialScore;
+};
 
 module.exports = calculateScore;
