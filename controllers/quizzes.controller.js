@@ -55,7 +55,7 @@ exports.addSolutions = async (req, res) => {
     try {
         const { quizId, userName, questions } = req.body;
 
-        const quiz = await Quiz.findById(quizId);
+        const quiz = await Quiz.findOne({ quizId: quizId });
 
         if (!quiz) {
             return res.status(404).json({ message: 'Quiz not found' });
@@ -73,7 +73,7 @@ exports.addSolutions = async (req, res) => {
 
         console.log("Obtained score saved successfully:", obtainedScore);
 
-        res.status(200).json({ message: 'Solution added successfully', score });
+        res.status(200).json({ message: 'Solution added successfully',  userName,  score });
     } catch (error) {
         console.error("Error adding solution:", error);
         res.status(500).json({ message: 'Internal server error' });
